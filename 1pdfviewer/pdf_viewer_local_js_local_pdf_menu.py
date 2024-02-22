@@ -78,15 +78,12 @@ class PdfViewerWidget(QWidget):
         
         self.from_date = self.from_date_input.date().toString(Qt.ISODate)
         self.to_date = self.to_date_input.date().toString(Qt.ISODate)
-        #self.from_date = '2024-02-21'
-        #self.to_date = '2024-02-23'
         
-        db_file_path = 'example_database.db'
+        db_file_path = str(Path.home() / 'pdfjs' / 'duckdb' / 'example_database.db')
         # Establish a connection to DuckDB and create a disk-based database
         connection = duckdb.connect(database=db_file_path, read_only=False)
 
         # Execute a query to fetch data from the table (just for verification)
-        #query_result = connection.execute(f"select * from dairy where date between {self.from_date_input.date().toString(Qt.ISODate)} and {self.from_date_input.date().toString(Qt.ISODate)}")
         query_result = connection.execute(f"select * from dairy where date between '{self.from_date}' and '{self.to_date}'")
         rows = query_result.fetchall()
         # Get the column names from the query result description
@@ -94,7 +91,8 @@ class PdfViewerWidget(QWidget):
         # Create a DataFrame using the fetched rows and column names
         df_result = pd.DataFrame(rows, columns=columns)
         
-        plt.figure(figsize=(8, 6))
+        plt.figure(figsize=(8.27, 11.69), dpi=100)
+        
         plt.text(0.5, 0.95, 'ERP SOLUTIONS Pvt. Ltd.', fontsize=18, ha='center', va='center')
         
         plt.text(0.5, 0.9, f"From Date {self.from_date_input.date().toString(Qt.ISODate)} To {self.to_date_input.date().toString(Qt.ISODate)}", fontsize=8, ha='center', va='center')
@@ -103,28 +101,27 @@ class PdfViewerWidget(QWidget):
         
         plt.text(0.1, 0.8, f"Print Date: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}", fontsize=8, ha='center', va='center')
         
-        plt.table(cellText=df_result.values,
+        table = plt.table(cellText=df_result.values,
             colLabels=df_result.columns,
             cellLoc='center',
-            loc='center')
-       
+            loc='center',
+            )
+        
         # Replace 'output_file.pdf' with your desired output file name
         plt.axis('off')
         
-        path = Path.home() / 'pdfjs' / 'web' / 'doc' / f'{datetime.now().strftime("%d%m%Y%H%M%S")}.pdf'
+        path = Path.home() / 'pdfjs' / 'doc' /'record'/ f'{datetime.now().strftime("%d%m%Y%H%M%S")}.pdf'
         
         plt.savefig(path, format='pdf')
         self.pdf_file = path
         self.webview.reload()
-        
-        #plt.show()
 
     def open_pdf(self):
         file_dialog = QFileDialog(self)
         file_dialog.setWindowTitle("Open PDF File")
         file_dialog.setFileMode(QFileDialog.ExistingFile)
         file_dialog.setNameFilter("PDF Files (*.pdf)")
-        path1 = str(Path.home() / 'pdfjs' / 'web'/ 'doc')
+        path1 = str(Path.home() / 'pdfjs'/ 'doc')
         file_dialog.setDirectory(path1)
         
 
@@ -159,9 +156,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # Make sure you replace this path with the path to your local PDF.js 'viewer.html' file
-    #pdfjs_path = "C:/Users/Aalesh/PycharmProjects/chetan_project/pdf_viewer_project/Resources/pdfjs/web/viewer.html"
     pdfjs_path = Path.home() / 'pdfjs' / 'web' / 'viewer.html'
     main_win = PdfViewerApp(pdfjs_path)
     main_win.show()
-
     sys.exit(app.exec())
