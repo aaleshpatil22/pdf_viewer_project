@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QMenu, QMenuBar, QFileDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QFileDialog
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QAction, QIcon, QPixmap
 from PySide6.QtWebEngineWidgets import QWebEngineView
@@ -51,7 +51,7 @@ class PdfViewerApp(QMainWindow):
 
         # Set the title and icon
         self.setWindowTitle("PDF Viewer App")
-        my_pixmap = QPixmap(Path("E:\projects\MultiReportwithDB\1pdfviewer\icon.png"))
+        my_pixmap = QPixmap(Path("icon.png"))
         self.setWindowIcon(QIcon(my_pixmap))
 
     def create_menu_bar(self):
@@ -66,8 +66,9 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # Make sure you replace this path with the path to your local PDF.js 'viewer.html' file
-    pdfjs_path = str(Path.home() / 'js' / 'pdfjs' / 'web' / 'viewer.html')
-
+    #pdfjs_path = "C:/Users/Aalesh/PycharmProjects/chetan_project/pdf_viewer_project/Resources/pdfjs/web/viewer.html"
+    pdfjs_path = "Resources/pdfjs/web/viewer.html"
+    print(pdfjs_path)
     main_win = PdfViewerApp(pdfjs_path)
     main_win.show()
 
